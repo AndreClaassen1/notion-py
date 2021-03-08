@@ -1,3 +1,4 @@
+""" angepasst von ac am Montag, 8. März 2021 14:30 """
 import hashlib
 import json
 import re
