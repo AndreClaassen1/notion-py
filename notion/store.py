@@ -329,23 +329,44 @@ class RecordStore(object):
             sort = [sort]
 
         data = {
-            "collectionId": collection_id,
-            "collectionViewId": collection_view_id,
+            "collection": {"id": collection_id},
+            "collectionView": {"id": collection_view_id},
             "loader": {
-                "limit": 100000,
-                "loadContentCover": True,
-                "searchQuery": search,
-                "userLocale": "en",
-                "userTimeZone": str(get_localzone()),
-                "type": type,
-            },
-            "query": {
-                "aggregate": aggregate,
-                "aggregations": aggregations,
+                "type": "reducer",
+                "reducers": {
+                    "collection_group_results": {"type": "results", "limit": 50}},
                 "filter": filter,
-                "sort": sort,
-            },
+                "searchQuery": "",
+                "userTimeZone": str(get_localzone())
+            }
         }
+
+        # old query with type table, deprecated?
+        #
+        # **André:** Mittwoch, 6. Oktober 2021 15:34
+        #
+        # dataold = {
+        #     "collection": {
+        #         "id": collection_id,
+        #     },
+        #     "collectionView": {
+        #         "id": collection_view_id,
+        #     },
+        #     "loader": {
+        #         "limit": 100,
+        #         "loadContentCover": True,
+        #         "searchQuery": search,
+        #         "userLocale": "en",
+        #         "userTimeZone": str(get_localzone()),
+        #         "type": type,
+        #     },
+        #     "query": {
+        #         "aggregate": aggregate,
+        #         "aggregations": aggregations,
+        #         "filter": filter,
+        #         "sort": sort,
+        #     },
+        # }
 
         response = self._client.post("queryCollection", data).json()
 

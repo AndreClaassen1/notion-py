@@ -648,7 +648,11 @@ class QueryResult(object):
         self.query = query
 
     def _get_block_ids(self, result):
-        return result["blockIds"]
+        if result["type"] == "reducer":
+            blockIds = result["reducerResults"]["collection_group_results"]["blockIds"]
+            return blockIds
+        else:
+            return result["blockIds"]
 
     def _get_block(self, id):
         block = CollectionRowBlock(self._client, id)
