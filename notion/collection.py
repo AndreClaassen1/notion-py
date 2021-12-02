@@ -1,3 +1,4 @@
+from typing import Optional
 from cached_property import cached_property
 from copy import deepcopy
 from datetime import datetime, date
@@ -14,8 +15,8 @@ from .utils import add_signed_prefix_as_needed, extract_id, remove_signed_prefix
 
 class NotionDate(object):
 
-    start = None
-    end = None
+    start: Optional[datetime] = None
+    end: Optional[datetime] = None
     timezone = None
 
     def __init__(self, start, end=None, timezone=None):
