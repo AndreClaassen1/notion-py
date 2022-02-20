@@ -335,38 +335,15 @@ class RecordStore(object):
                 "type": "reducer",
                 "reducers": {
                     "collection_group_results": {"type": "results", "limit": 50}},
-                "filter": filter,
+                #                "filter": filter,
                 "searchQuery": "",
                 "userTimeZone": str(get_localzone())
             }
         }
 
-        # old query with type table, deprecated?
-        #
-        # **André:** Mittwoch, 6. Oktober 2021 15:34
-        #
-        # dataold = {
-        #     "collection": {
-        #         "id": collection_id,
-        #     },
-        #     "collectionView": {
-        #         "id": collection_view_id,
-        #     },
-        #     "loader": {
-        #         "limit": 100,
-        #         "loadContentCover": True,
-        #         "searchQuery": search,
-        #         "userLocale": "en",
-        #         "userTimeZone": str(get_localzone()),
-        #         "type": type,
-        #     },
-        #     "query": {
-        #         "aggregate": aggregate,
-        #         "aggregations": aggregations,
-        #         "filter": filter,
-        #         "sort": sort,
-        #     },
-        # }
+        # 2022/02/20 - empty filter tags are not allowed anymore
+        if filter:
+            data['loader']['filter'] = filter
 
         response = self._client.post("queryCollection", data).json()
 
