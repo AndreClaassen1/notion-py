@@ -62,7 +62,10 @@ class NotionClient(object):
         cache_key=None,
     ):
         self.session = create_session()
-        self.session.cookies = cookiejar_from_dict({"token_v2": token_v2})
+        cookies = {
+            "token_v2": token_v2
+        }
+        self.session.cookies = cookiejar_from_dict(cookies)
         if enable_caching:
             cache_key = cache_key or hashlib.sha256(
                 token_v2.encode()).hexdigest()
