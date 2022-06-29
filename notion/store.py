@@ -226,7 +226,7 @@ class RecordStore(object):
         for cb in callback_queue:
             self._trigger_callbacks(*cb)
 
-    def call_get_record_values(self, **kwargs):
+    def call_get_record_values_old(self, **kwargs):
         """
         Call the server's getRecordValues endpoint to update the local record store. The keyword arguments map
         table names into lists of (or singular) record IDs to load for that table. Use True to refresh all known
@@ -269,6 +269,68 @@ class RecordStore(object):
                     value=result.get("value"),
                     role=result.get("role"),
                 )
+
+    def call_get_record_values(self, **kwargs):
+        """
+        Call the server's getRecordValues endpoint to update the local record store. The keyword arguments map
+        table names into lists of (or singular) record IDs to load for that table. Use True to refresh all known
+        records for that table.
+        """
+
+        requestlist = []
+
+        for table, ids in kwargs.items():
+
+            # ensure "ids" is a proper list
+            if ids is True:
+                ids = list(self._values.get(table, {}).keys())
+            if isinstance(ids, str):
+                ids = [ids]
+
+            # if we're in a transaction, add the requested IDs to a queue to refresh when the transaction completes
+            if self._client.in_transaction():
+                self._records_to_refresh[table] = list(
+                    set(self._records_to_refresh.get(table, []) + ids)
+                )
+                continue
+
+            requestlist += [
+                {
+                    "pointer": {
+                        "table": table,
+                        "id": extract_id(id)
+                    },
+                    "version": -1
+                } for id in ids]
+
+        if requestlist:
+            logger.debug(
+                "Calling 'getRecordValues' endpoint for requests: {}".format(
+                    requestlist
+                )
+            )
+
+            # getRecordValues is deprecated
+
+            request = {
+                "requests": requestlist
+            }
+            result = self._client.post(
+                "syncRecordValues", request
+            ).json()
+
+            recordMap = result['recordMap']
+
+            for table in list(recordMap.keys()):
+                table_records = recordMap[table]
+                for id in list(table_records.keys()):
+                    record = table_records[id]
+                    self._update_record(
+                        table,
+                        id,
+                        value=record.get("value"),
+                        role=record.get("role"),
+                    )
 
     def get_current_version(self, table, id):
         values = self._get(table, id)
