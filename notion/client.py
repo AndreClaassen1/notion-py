@@ -36,7 +36,7 @@ def create_session():
     retry = Retry(
         5,
         backoff_factor=0.3,
-        status_forcelist=(502,),
+        status_forcelist=(502, 504,),
         # CAUTION: adding 'POST' to this list which is not technically idempotent
         method_whitelist=("POST", "HEAD", "TRACE", "GET",
                           "PUT", "OPTIONS", "DELETE"),
