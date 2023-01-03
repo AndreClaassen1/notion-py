@@ -437,7 +437,7 @@ class CollectionRowBlock(PageBlock):
                     val = float(val)
                 else:
                     val = int(val)
-        if prop["type"] in ["select"]:
+        if prop["type"] in ["select", "status"]:
             val = val[0][0] if val else None
         if prop["type"] in ["multi_select"]:
             val = [v.strip() for v in val[0][0].split(",")] if val else []
@@ -524,7 +524,7 @@ class CollectionRowBlock(PageBlock):
                         )
                     )
                 val = [[str(val)]]
-        if prop["type"] in ["select"]:
+        if prop["type"] in ["select", "status"]:
             if not val:
                 val = None
             else:
