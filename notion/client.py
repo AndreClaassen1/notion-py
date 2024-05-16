@@ -38,8 +38,9 @@ def create_session():
         backoff_factor=0.3,
         status_forcelist=(502, 504,),
         # CAUTION: adding 'POST' to this list which is not technically idempotent
-        method_whitelist=("POST", "HEAD", "TRACE", "GET",
-                          "PUT", "OPTIONS", "DELETE"),
+        # method_whitelist is since the new urllib3 deprecated. instead use allowed_methods
+        allowed_methods=("POST", "HEAD", "TRACE", "GET",
+                         "PUT", "OPTIONS", "DELETE"),
     )
     adapter = HTTPAdapter(max_retries=retry)
     session.mount("https://", adapter)
