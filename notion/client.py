@@ -210,6 +210,13 @@ class NotionClient(object):
     def post(self, endpoint, data):
         """
         All API requests on Notion.so are done as POSTs (except the websocket communications).
+
+        ```python
+        import json
+        with open("response.json", "w") as f:   
+            json.dump(response.json(), f, indent=4, ensure_ascii=False)
+        ```
+
         """
         url = urljoin(API_BASE_URL, endpoint)
         response = self.session.post(url, json=data)
